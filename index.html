@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Claim ₹150</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #e8f0ff, #ffffff);
+      margin: 0;
+      padding: 20px;
+    }
+    .container {
+      max-width: 400px;
+      margin: auto;
+      background: #ffffff;
+      padding: 30px 25px;
+      border-radius: 20px;
+      box-shadow: 0 12px 25px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+    .offer-badge {
+      background: linear-gradient(45deg, gold, orange);
+      color: white;
+      font-weight: bold;
+      width: 130px;
+      margin: auto;
+      padding: 10px 0;
+      border-radius: 50%;
+      margin-bottom: 20px;
+      animation: bounce 0.8s ease-in-out infinite;
+    }
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+    h1 { color: #1e7f1e; margin-bottom: 10px; font-size: 26px; }
+    h2 { color: #333; font-weight: 600; margin-bottom: 5px; }
+    p { color: #555; font-size: 14px; margin-bottom: 20px; }
+    input[type="text"] {
+      padding: 12px;
+      width: 90%;
+      margin: 10px 0;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      font-size: 15px;
+    }
+    input[type="text"]:focus {
+      border-color: #1e7f1e;
+      outline: none;
+      box-shadow: 0 0 5px rgba(30, 127, 30, 0.2);
+    }
+    button {
+      padding: 12px 25px;
+      background: #1e7f1e;
+      color: white;
+      border: none;
+      border-radius: 50px;
+      font-size: 16px;
+      margin-top: 10px;
+      cursor: pointer;
+    }
+    .track-btn { margin-top: 20px; background: #0077cc; }
+    .back-btn { background: #ff5c5c; margin-top: 20px; }
+    #statusMsg, #trackStatusMsg {
+      margin-top: 8px;
+      font-size: 15px;
+      font-weight: bold;
+      display: none;
+    }
+    #trackingPage { display: none; }
+  </style>
+</head>
+<body>
+
+<!-- Main Page -->
+<div class="container" id="mainPage">
+  <div class="offer-badge">SPECIAL OFFER</div>
+  <h2>Join Offer</h2>
+  <h1>Get ₹150</h1>
+  <p>Submit your UPI ID to claim your bonus now!</p>
+
+  <input type="text" id="upiInput" placeholder="Enter your UPI ID" />
+  <button id="submitBtn">GO</button>
+  <p id="statusMsg">PROCESSING...</p>
+
+  <button class="track-btn" onclick="showTracking()">Track Payment</button>
+</div>
+
+<!-- Tracking Page -->
+<div class="container" id="trackingPage">
+  <h2>Track Your Payment</h2>
+  <input type="text" id="username" placeholder="Enter Profile Username (e.g., player123)" />
+  <input type="text" id="uid" placeholder="Enter UID" />
+  <button id="trackBtn">Submit</button>
+  <p id="trackStatusMsg"></p>
+  <button class="back-btn" onclick="showMain()">Back</button>
+</div>
+
+<script>
+  // Google Script URL
+  const SCRIPT_URL = "PASTE_YOUR_WEB_APP_URL_HERE"; // <-- yaha apna deploy URL dalna hai
+
+  // Show tracking page
+  function showTracking() {
+    document.getElementById("mainPage").style.display = "none";
+    document.getElementById("trackingPage").style.display = "block";
+  }
+
+  function showMain() {
+    document.getElementById("trackingPage").style.display = "none";
+    document.getElementById("mainPage").style.display = "block";
+  }
+
+  // UPI Submit Logic
+  document.getElementById("submitBtn").addEventListener("click", function () {
+    const upi = document.getElementById("upiInput").value.trim();
+    const statusMsg = document.getElementById("statusMsg");
+    if (upi === "") {
+      statusMsg.textContent = "Please enter your UPI ID.";
+      statusMsg.style.color = "red";
+      statusMsg.style.display = "block";
+      return;
+    }
+    statusMsg.textContent = "Processing...";
+    statusMsg.style.color = "black";
+    statusMsg.style.display = "block";
+
+    setTimeout(() => {
+      window.location.href = "https://invite.yk177.com/?code=T850RNZ"; // <-- Apna refer link yaha daala hai
+    }, 2000);
+  });
+
+  // Tracking Submit Logic (save to Google Sheet)
+  document.getElementById("trackBtn").addEventListener("click", function () {
+    const username = document.getElementById("username").value.trim();
+    const uid = document.getElementById("uid").value.trim();
+    const trackStatusMsg = document.getElementById("trackStatusMsg");
+
+    const usernamePattern = /^player(\d+)$/i;
+    const match = username.match(usernamePattern);
+
+    if (!match || uid === "") {
+      trackStatusMsg.textContent = "Invalid Username or UID!";
+      trackStatusMsg.style.color = "red";
+      trackStatusMsg.style.display = "block";
+      return;
+    }
+
+    const numbersFromUsername = match[1];
+    if (uid !== numbersFromUsername) {
+      trackStatusMsg.textContent = "UID must match the number in Username!";
+      trackStatusMsg.style.color = "red";
+      trackStatusMsg.style.display = "block";
+      return;
+    }
+
+    // Save to Google Sheet
+    fetch(SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username: username, uid: uid })
+    }).then(() => {
+      trackStatusMsg.textContent = "Please wait 24-48 hours for confirmation.";
+      trackStatusMsg.style.color = "black";
+      trackStatusMsg.style.display = "block";
+    }).catch(() => {
+      trackStatusMsg.textContent = "Error saving data!";
+      trackStatusMsg.style.color = "red";
+      trackStatusMsg.style.display = "block";
+    });
+  });
+</script>
+</body>
+</html>
